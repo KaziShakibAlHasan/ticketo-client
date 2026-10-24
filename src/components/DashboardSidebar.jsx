@@ -21,11 +21,7 @@ import Image from "next/image";
 
 // Menu items for each role
 const MENU_BY_ROLE = {
-  attendee: [
-    { key: "overview", label: "Overview", icon: FaUserCircle },
-    { key: "tickets", label: "My Tickets", icon: FaTicketAlt },
-    { key: "payments", label: "Payments", icon: FaHistory },
-  ],
+   
   organizer: [
     { key: "overview", label: "Overview", icon: FaUsers },
     { key: "organization", label: "Organization", icon: FaBuilding },

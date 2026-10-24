@@ -18,5 +18,21 @@ export const auth = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "placeholder-google-client-secret"
     }
   },
+  user: {
+       additionalFields: {
+          role: {
+              // type: "string",
+              // input: false
+              defaultValue: 'attendee'
+            },
+            isBlocked: {
+              defaultValue: false
+            },
+            isPremium: {
+              defaultValue: false,
+            }
+
+        }
+    }
  
 });

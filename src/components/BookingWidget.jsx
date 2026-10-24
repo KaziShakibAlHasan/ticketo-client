@@ -1,75 +1,175 @@
+
 "use client";
 
 import { useState } from "react";
-import { Card, Button, Input } from "@heroui/react";
-import { FaCheck } from "react-icons/fa";
+import Link from "next/link";
+import { FaArrowLeft, FaCheck } from "react-icons/fa";
 
-export default function BookingWidget({ ticketPrice = 49.99, availableSeats = 120 }) {
-  const isSoldOut = availableSeats <= 0;
+export default function BookingWidget({
+  event = {},
+  ticketPrice = 49.99,
+  availableSeats = 120,
+}) {
+  const [quantity, setQuantity] = useState(1);
+
+  const price = Number(event.price ?? event.ticketPrice ?? ticketPrice);
+  const seats = Number(
+    event.availableSeats ?? event.capacity ?? availableSeats
+  );
+
+  const isSoldOut = seats <= 0;
+  const totalPrice = price * quantity;
+
+  const handleBooking = () => {
+    alert(
+      `Booking Summary\nEvent: ${event.title}\nTickets: ${quantity}\nTotal: ${
+        price === 0 ? "Free" : `$${totalPrice.toFixed(2)}`
+      }`
+    );
+  };
 
   return (
-    <Card className="glass border-white/5 sticky top-24" radius="lg">
-      <div className="p-8 space-y-6">
-        <h3 className="text-xl font-bold text-white">Booking Details</h3>
+    <main className="min-h-screen bg-slate-950 px-4 py-8 text-white">
+      <div className="mx-auto max-w-7xl">
+        
 
-        {/* Stat list */}
-        <div className="space-y-4">
-          <div className="flex justify-between items-center text-sm">
-            <span className="text-slate-400">Ticket Price:</span>
-            <span className="text-pink-400 font-extrabold text-xl">
-              {ticketPrice === 0 ? "Free" : `$${ticketPrice.toFixed(2)}`}
-            </span>
-          </div>
-          <div className="flex justify-between items-center text-sm">
-            <span className="text-slate-400">Available Seats:</span>
-            <span className="text-white font-bold">
-              {isSoldOut ? (
-                <span className="text-red-500 uppercase">Sold Out</span>
-              ) : (
-                `${availableSeats} Seats Left`
-              )}
-            </span>
-          </div>
-        </div>
+        <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-3">
+          {/* Event Details */}
+          <div className="overflow-hidden rounded-2xl border border-white/10 bg-slate-900/70 lg:col-span-2">
+            {event.banner && (
+              <img
+                src={event.banner}
+                alt={event.title || "Event banner"}
+                className="h-64 w-full object-cover sm:h-96"
+              />
+            )}
 
-        {!isSoldOut && (
-          <>
-            {/* Quantity selector */}
-            <Input
-              type="number"
-              label="Quantity"
-              labelPlacement="outside"
-              placeholder="1"
-              min={1}
-              max={availableSeats}
-              className="bg-slate-900/50 border-white/10 hover:border-pink-500/50 focus-within:!border-pink-500"
-            />
-
-            <div className="flex justify-between items-center text-sm font-semibold text-white pt-2">
-              <span>Total Amount:</span>
-              <span className="text-white text-lg">
-                ${ticketPrice.toFixed(2)}
+            <div className="space-y-5 p-6">
+              <span className="inline-block rounded-full bg-pink-500/10 px-3 py-1 text-sm font-semibold text-pink-400">
+                {event.category || "Event"}
               </span>
+
+              <h1 className="text-3xl font-bold sm:text-4xl">
+                {event.title || "Event Details"}
+              </h1>
+
+              <p className="leading-7 text-slate-400">
+                {event.description || "No description available."}
+              </p>
+
+              <div className="grid gap-4 border-t border-white/10 pt-5 sm:grid-cols-2">
+                <div>
+                  <p className="text-sm text-slate-500">Date</p>
+                  <p className="mt-1 text-slate-200">
+                    📅 {event.date || "Date not available"}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-sm text-slate-500">Location</p>
+                  <p className="mt-1 text-slate-200">
+                    📍 {event.location || "Location not available"}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-sm text-slate-500">Ticket Price</p>
+                  <p className="mt-1 text-xl font-bold text-pink-400">
+                    {price === 0 ? "Free" : `$${price.toFixed(2)}`}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-sm text-slate-500">Available Seats</p>
+                  <p className="mt-1 text-slate-200">{seats}</p>
+                </div>
+              </div>
             </div>
-          </>
-        )}
+          </div>
 
-        <Button
-          isDisabled={isSoldOut}
-          className={`w-full font-bold h-12 shadow-lg ${isSoldOut
-            ? "bg-slate-800 text-slate-500 shadow-none cursor-not-allowed"
-            : "bg-gradient-to-r from-pink-500 to-indigo-600 text-white shadow-pink-500/10 hover:shadow-pink-500/20"
-            }`}
-          radius="lg"
-        >
-          {isSoldOut ? "Sold Out" : "Book Ticket Now"}
-        </Button>
+          {/* Booking Card */}
+          <div className="lg:sticky lg:top-24">
+            <div className="rounded-2xl border border-white/10 bg-slate-900 p-6">
+              <h2 className="mb-2 text-2xl font-bold">Book Your Tickets</h2>
 
-        <div className="flex items-center gap-2 text-[11px] text-slate-400 text-center justify-center pt-2">
-          <FaCheck className="text-green-500 shrink-0" />
-          <span>Instant confirmation | Vetted organizers</span>
+              <p className="mb-6 text-sm text-slate-400">
+                Select the number of tickets you want to book.
+              </p>
+
+              {isSoldOut ? (
+                <p className="rounded-lg bg-red-500/10 p-4 text-center font-semibold text-red-400">
+                  Tickets Sold Out
+                </p>
+              ) : (
+                <>
+                  <div className="mb-5 flex items-center justify-between">
+                    <span className="text-slate-300">Quantity</span>
+
+                    <div className="flex items-center gap-4">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setQuantity((prev) => Math.max(1, prev - 1))
+                        }
+                        disabled={quantity <= 1}
+                        className="h-9 w-9 rounded-lg border border-white/10 disabled:opacity-40"
+                      >
+                        -
+                      </button>
+
+                      <span className="min-w-5 text-center font-bold">
+                        {quantity}
+                      </span>
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setQuantity((prev) =>
+                            Math.min(seats, prev + 1)
+                          )
+                        }
+                        disabled={quantity >= seats}
+                        className="h-9 w-9 rounded-lg border border-white/10 disabled:opacity-40"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3 border-t border-white/10 py-5">
+                    <div className="flex justify-between text-slate-400">
+                      <span>Price per ticket</span>
+                      <span>
+                        {price === 0 ? "Free" : `$${price.toFixed(2)}`}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between text-lg font-bold">
+                      <span>Total</span>
+                      <span className="text-pink-400">
+                        {price === 0 ? "Free" : `$${totalPrice.toFixed(2)}`}
+                      </span>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleBooking}
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-pink-500 px-5 py-3 font-semibold text-white transition hover:bg-pink-600"
+                  >
+                    <FaCheck />
+                    Book Tickets
+                  </button>
+
+                  <p className="mt-4 text-center text-xs text-slate-500">
+                    Booking confirmation will be shown after submission.
+                  </p>
+                </>
+              )}
+            </div>
+          </div>
         </div>
       </div>
-    </Card>
+    </main>
   );
 }
